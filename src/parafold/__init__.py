@@ -18,7 +18,15 @@ try:
 except PackageNotFoundError:  # editable install before metadata is built
     __version__ = "0+unknown"
 
-from parafold.core.types import PredictionResult
+
+# absent from ``__all__`` but kept importable as ``parafold.TCRChainPair`` /
+# ``parafold.pMHCInput`` for advanced callers. They are NOT part of the
+# pre-M3 stability promise and do NOT come through ``from parafold import *``.
+from parafold.core.types import (
+    PredictionResult,
+    TCRChainPair,  # noqa: F401  (intentional non-__all__ re-export)
+    pMHCInput,  # noqa: F401  (intentional non-__all__ re-export)
+)
 from parafold.facade import predict_complex
 
 __all__ = [

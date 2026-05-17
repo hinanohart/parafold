@@ -73,7 +73,13 @@ jobs:
         run: |
           pip install dist/parafold-*.whl
           python -c "import parafold; assert parafold.__version__; print('parafold', parafold.__version__)"
-          python -c "from parafold import predict_complex, pMHCInput, TCRChainPair, PredictionResult; print('imports OK')"
+          # Stable __all__ surface (public re-exports)
+          python -c "from parafold import predict_complex, PredictionResult; print('public imports OK')"
+          # Boundary models remain importable via parafold.<name> even though
+          # they are intentionally excluded from __all__ pre-M3.
+          python -c "from parafold import pMHCInput, TCRChainPair; print('boundary imports OK')"
+          # And via the canonical core.types submodule.
+          python -c "from parafold.core.types import pMHCInput, TCRChainPair; print('submodule imports OK')"
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4

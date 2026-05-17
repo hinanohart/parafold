@@ -8,7 +8,7 @@ authors:
 url: "https://github.com/hinanohart/parafold"
 repository-code: "https://github.com/hinanohart/parafold"
 license: MIT
-version: 0.0.7
+version: 0.0.8
 date-released: "2026-05-18"
 keywords:
   - bioinformatics

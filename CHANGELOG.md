@@ -5,6 +5,26 @@ All notable changes to ParaFold are recorded here. The format follows
 follows [Semantic Versioning](https://semver.org/). Versions below 0.1.0 are
 pre-alpha; the public API may break without deprecation cycles until M3.
 
+## [0.0.8] — 2026-05-18
+
+### Fixed
+- ``parafold.__init__`` re-imports ``TCRChainPair`` and ``pMHCInput`` so
+  ``from parafold import pMHCInput`` continues to resolve, even though
+  the names stay out of ``__all__``. v0.0.4-v0.0.7 had dropped the import
+  outright and broke the CI build-smoke step's import test.
+- The CI ``build`` job's import probe now distinguishes the three
+  intended surfaces: public ``__all__`` (``predict_complex``,
+  ``PredictionResult``), boundary attributes available via
+  ``parafold.<name>`` but excluded from ``__all__``, and the canonical
+  ``parafold.core.types`` submodule.
+
+### Notes
+- v0.0.4 through v0.0.7 carry the audit-closure changes and the release
+  tooling improvements; their CI ``build`` jobs failed on the import probe
+  because the test had not been updated to match the narrowed ``__all__``.
+  v0.0.8 is the first commit where the entire OS matrix (6 legs) and the
+  separate build-smoke job all pass.
+
 ## [0.0.7] — 2026-05-18
 
 ### Fixed
@@ -162,6 +182,7 @@ pre-alpha; the public API may break without deprecation cycles until M3.
   wrapper, pydantic input boundary, ``parafold`` CLI scaffold, Mol\* JSON
   exporter, 34 unit tests, ruff + mypy strict CI on Python 3.11 / 3.12.
 
+[0.0.8]: https://github.com/hinanohart/parafold/releases/tag/v0.0.8
 [0.0.7]: https://github.com/hinanohart/parafold/releases/tag/v0.0.7
 [0.0.6]: https://github.com/hinanohart/parafold/releases/tag/v0.0.6
 [0.0.5]: https://github.com/hinanohart/parafold/releases/tag/v0.0.5
