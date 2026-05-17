@@ -53,9 +53,12 @@ node_modules/
 .svelte-kit/
 src/parafold/viz_api/static/
 
-# Failure recovery sandbox — never let cp -r snapshots leak data/
-experiments/_wip/**/data/
-experiments/_wip/**/checkpoints/
+# Failure recovery sandbox. Everything under experiments/_wip/ is local-only
+# scratch (R8 protocol: cp -r snapshots of failed work-trees, never commit).
+# The keep-file below is the one allowed tracked entry.
+experiments/_wip/*
+!experiments/_wip/.gitkeep
+!experiments/_wip/README.md
 
 # Secrets — never commit env files
 .env

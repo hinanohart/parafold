@@ -9,7 +9,7 @@ from importlib.metadata import PackageNotFoundError, version
 try:
     __version__ = version("parafold")
 except PackageNotFoundError:  # editable install before metadata is built
-    __version__ = "0.0.1"
+    __version__ = "0+unknown"
 
 from parafold.core.types import PredictionResult, TCRChainPair, pMHCInput
 from parafold.facade import predict_complex

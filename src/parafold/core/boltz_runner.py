@@ -70,7 +70,13 @@ class BoltzRunner:
             ) from exc
 
         if completed.returncode != 0:
-            tail = completed.stderr[-2000:] if completed.stderr else "(no stderr)"
+            if completed.stderr:
+                # Keep the last ~50 lines of upstream stderr so ANSI-noisy
+                # progress bars do not eclipse the actual error.
+                lines = completed.stderr.splitlines()
+                tail = "\n".join(lines[-50:]) if lines else "(no stderr)"
+            else:
+                tail = "(no stderr)"
             raise BoltzRunnerError(
                 f"boltz predict failed (rc={completed.returncode}):\n--- stderr ---\n{tail}",
             )

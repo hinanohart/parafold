@@ -3,10 +3,12 @@ message: "If you use ParaFold in academic work, please cite this software entry 
 title: "ParaFold: TCR-pMHC repertoire structural predictor"
 type: software
 authors:
-  - name: "ParaFold contributors"
-url: "https://github.com/runza/parafold"
+  - name: "The ParaFold contributors"
+    website: "https://github.com/hinanohart/parafold/graphs/contributors"
+url: "https://github.com/hinanohart/parafold"
+repository-code: "https://github.com/hinanohart/parafold"
 license: MIT
-version: 0.0.1
+version: 0.0.2
 date-released: "2026-05-17"
 keywords:
   - bioinformatics

@@ -6,11 +6,19 @@ on purpose and will firm up at the first PyPI release.
 ## Development setup
 
 ```bash
-git clone https://github.com/runza/parafold
+git clone https://github.com/hinanohart/parafold
 cd parafold
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,docs]"
 ```
+
+## Release cadence
+
+Releases beyond M2 are not automated end-to-end. PyPI (M3), Hugging Face Hub
+(M4) and the arXiv preprint (M7) each require credentials that live outside
+the repository; maintainers cut them manually. See `scripts/release.sh` and
+`INSTRUCTIONS_MANUAL.md` for the exact split between scripted and human-only
+steps.
 
 ## Quality gates
 

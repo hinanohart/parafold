@@ -13,6 +13,7 @@ ParaFold is an open-source Python package for predicting the structural ensemble
 - A **Mol\* + UMAP** viz layer (M5) for visualising both individual complexes and the projected repertoire space.
 
 > _"What they were calling prediction was closer to auditing — a quiet survey of the sub-space of permutations the protein had already been performing in private."_
+> &mdash; ParaFold design notes, internal.
 
 > **Pre-M3 status.** M0-M2 ship the typed scaffold today. Until M3 lands the
 > pMHC YAML emitter, the CLI prints a roadmap notice and exits non-zero, and
@@ -78,7 +79,7 @@ The base predictor is invoked out-of-process so that Boltz-2 version pinning, de
 | M3 | pMHC module + 1st PyPI release | planned |
 | M4 | repertoire ensemble (HF Hub weights) | planned |
 | M5 | Mol\* + repertoire UMAP viz | planned |
-| M6 | docs + CI | scaffolded |
+| M6 | docs + CI | partial (CI only) |
 | M7 | tag / arXiv preprint | planned |
 
 ## Datasets
@@ -95,10 +96,16 @@ Upstream component licenses:
 |---|---|---|
 | Boltz-2 | MIT | base structure predictor (subprocess) |
 | Mol\* | MIT | viz (M5) |
-| UMAP-learn | BSD-3 | projection (optional) |
-| PyTorch | BSD-3 | core (optional) |
+| UMAP-learn | BSD-3 | projection (optional, ``[umap]`` extra) |
+| PyTorch | BSD-3 | core (optional, ``[torch]`` extra) |
+| Hydra | MIT | config (optional, ``[sci]`` extra) |
+| Biotite | BSD-3 | structure I/O (optional, ``[sci]`` extra) |
 
 PHATE (GPL-3) is intentionally **not** used.
+
+> Note: Boltz-2 itself currently requires Linux/CUDA. ParaFold's own typed API
+> is OS-agnostic (CI runs on Linux + macOS + Windows), but full structural
+> prediction lands when the local Boltz-2 install is available.
 
 ## Citation
 

@@ -8,9 +8,13 @@ from __future__ import annotations
 
 import dataclasses
 
+# Locus tokens are the prefix between ``HLA-`` and ``*`` in the IPD-IMGT
+# nomenclature. The input boundary (``pMHCInput`` in ``core/types.py``) only
+# admits these tokens; the bare ``"DR"`` / ``"DP"`` / ``"DQ"`` aggregates are
+# rejected upstream and would never reach this set.
 _CLASS_I_LOCI: frozenset[str] = frozenset({"A", "B", "C", "E", "F", "G"})
 _CLASS_II_LOCI: frozenset[str] = frozenset(
-    {"DR", "DRA", "DRB1", "DRB3", "DRB4", "DRB5", "DP", "DPA1", "DPB1", "DQ", "DQA1", "DQB1"},
+    {"DRA", "DRB1", "DRB3", "DRB4", "DRB5", "DPA1", "DPB1", "DQA1", "DQB1"},
 )
 
 

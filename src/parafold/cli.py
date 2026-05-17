@@ -31,12 +31,15 @@ def predict_cmd(
     out: str = typer.Option("out.pdb", "--out", help="Output PDB path"),
 ) -> None:
     """Predict a TCR-pMHC complex. M3 wires the full pipeline."""
-    typer.echo("parafold predict: M3 implementation pending — see README roadmap.")
-    typer.echo(f"  tcr_alpha={tcr_alpha}")
-    typer.echo(f"  tcr_beta={tcr_beta}")
-    typer.echo(f"  peptide={peptide}")
-    typer.echo(f"  hla={hla}")
-    typer.echo(f"  out={out}")
+    typer.echo(
+        "parafold predict: M3 implementation pending — see README roadmap.",
+        err=True,
+    )
+    typer.echo(f"  tcr_alpha={tcr_alpha}", err=True)
+    typer.echo(f"  tcr_beta={tcr_beta}", err=True)
+    typer.echo(f"  peptide={peptide}", err=True)
+    typer.echo(f"  hla={hla}", err=True)
+    typer.echo(f"  out={out}", err=True)
     raise typer.Exit(code=2)
 
 

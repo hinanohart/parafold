@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling>=1.18"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "parafold"
-version = "0.0.1"
+version = "0.0.2"
 description = "TCR-pMHC repertoire structural predictor built atop Boltz-2"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -23,23 +23,28 @@ classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
-    "Operating System :: POSIX :: Linux",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Typing :: Typed",
 ]
 dependencies = [
+    "pydantic>=2.5",
+    "typer>=0.12",
+]
+
+[project.optional-dependencies]
+# Heavy scientific stack — required by M3+ runtime, not by the M0-M2 scaffold.
+# Promoting these to required would force a 200MB+ install on users who only
+# want the typed API surface today.
+sci = [
     "numpy>=1.26",
     "scipy>=1.12",
     "biotite>=0.40",
     "hydra-core>=1.3",
-    "pydantic>=2.5",
-    "typer>=0.12",
-    "rich>=13.7",
 ]
-
-[project.optional-dependencies]
 torch = ["torch>=2.1"]
 umap = ["umap-learn>=0.5"]
 dev = [
@@ -48,6 +53,7 @@ dev = [
     "mypy>=1.8",
     "ruff>=0.4",
     "hypothesis>=6.100",
+    "build>=1.2",
 ]
 docs = [
     "mkdocs-material>=9.5",
@@ -55,9 +61,11 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/runza/parafold"
-Issues = "https://github.com/runza/parafold/issues"
-Documentation = "https://github.com/runza/parafold#readme"
+Homepage = "https://github.com/hinanohart/parafold"
+Issues = "https://github.com/hinanohart/parafold/issues"
+Documentation = "https://github.com/hinanohart/parafold#readme"
+"Source Code" = "https://github.com/hinanohart/parafold"
+Changelog = "https://github.com/hinanohart/parafold/releases"
 
 [project.scripts]
 parafold = "parafold.cli:app"
@@ -83,6 +91,21 @@ filterwarnings = [
     "default::PendingDeprecationWarning",
 ]
 
+[tool.coverage.run]
+branch = true
+source = ["parafold"]
+parallel = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "@(abc\\.)?abstractmethod",
+]
+show_missing = true
+skip_empty = true
+
 [tool.mypy]
 python_version = "3.11"
 strict = true
@@ -92,8 +115,10 @@ no_implicit_optional = true
 warn_return_any = true
 warn_unreachable = true
 
+# Extras-only deps: ignore missing imports so the typed scaffold compiles
+# in a minimal install where heavy scientific deps are not present.
 [[tool.mypy.overrides]]
-module = ["biotite.*", "umap.*", "hydra.*", "scipy.*"]
+module = ["biotite.*", "umap.*", "hydra.*", "scipy.*", "torch.*"]
 ignore_missing_imports = true
 
 [tool.ruff]

@@ -7,13 +7,15 @@ from typer.testing import CliRunner
 from parafold import __version__
 from parafold.cli import app
 
+# result.output is the combined stdout+stderr stream. Recent Click (≥8.2)
+# removed the mix_stderr kwarg and exposes only combined output to invokers.
 runner = CliRunner()
 
 
 def test_version_command_prints_version() -> None:
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert __version__ in result.stdout
+    assert __version__ in result.output
 
 
 def test_predict_command_exits_2_pre_m3() -> None:
@@ -33,11 +35,13 @@ def test_predict_command_exits_2_pre_m3() -> None:
         ],
     )
     assert result.exit_code == 2
-    assert "M3" in result.stdout
+    # The diagnostic flows through typer.echo(..., err=True) — visible in the
+    # combined Result.output stream.
+    assert "M3" in result.output
 
 
 def test_help_lists_subcommands() -> None:
     result = runner.invoke(app, ["--help"])
     assert result.exit_code == 0
-    assert "version" in result.stdout
-    assert "predict" in result.stdout
+    assert "version" in result.output
+    assert "predict" in result.output

@@ -12,7 +12,7 @@ from parafold.core import BoltzRunner
 
 class TestPredictComplex:
     def test_rejects_short_peptide(self) -> None:
-        with pytest.raises(ValueError, match="peptide"):
+        with pytest.raises(ValueError, match=r"pMHC|peptide"):
             predict_complex(
                 tcr_alpha="Q" * 30,
                 tcr_beta="D" * 30,
@@ -21,7 +21,7 @@ class TestPredictComplex:
             )
 
     def test_rejects_malformed_hla(self) -> None:
-        with pytest.raises(ValueError, match="hla"):
+        with pytest.raises(ValueError, match=r"pMHC|hla"):
             predict_complex(
                 tcr_alpha="Q" * 30,
                 tcr_beta="D" * 30,
@@ -38,13 +38,36 @@ class TestPredictComplex:
             predict_complex(**class_one_input)
 
     def test_short_tcr_chain_rejected(self) -> None:
-        with pytest.raises(ValueError, match="20 residues"):
+        with pytest.raises(ValueError, match=r"TCR chain"):
             predict_complex(
                 tcr_alpha="QKVTQ",
                 tcr_beta="D" * 30,
                 peptide="GILGFVFTL",
                 hla="HLA-A*02:01",
             )
+
+    def test_rejects_nonsense_amino_acid_in_tcr(self) -> None:
+        """Non-standard amino-acid letters in either TCR chain are rejected."""
+        with pytest.raises(ValueError, match=r"TCR chain"):
+            predict_complex(
+                tcr_alpha=("Q" * 29) + "Z",
+                tcr_beta="D" * 30,
+                peptide="GILGFVFTL",
+                hla="HLA-A*02:01",
+            )
+
+    def test_out_dir_emits_future_warning(self, class_one_input: dict[str, str]) -> None:
+        """Passing out_dir pre-M3 must emit a FutureWarning, not silently ignore."""
+        from pathlib import Path
+        from unittest.mock import patch as _patch
+
+        inputs = dict(class_one_input)
+        with (
+            _patch.object(BoltzRunner, "assert_available", return_value=None),
+            pytest.warns(FutureWarning, match=r"out_dir"),
+            pytest.raises(NotImplementedError, match="M3"),
+        ):
+            predict_complex(**inputs, out_dir=Path("/tmp/parafold-out"))
 
     def test_accepts_iedb_shorthand_hla(self, class_one_input: dict[str, str]) -> None:
         """4-digit IEDB shorthand 'HLA-A*0201' must validate (alongside colon form)."""

@@ -10,10 +10,13 @@ This keeps the public signature honest about its readiness state.
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 
+from pydantic import ValidationError
+
 from parafold.core.boltz_runner import BoltzRunner
-from parafold.core.types import PredictionResult, pMHCInput
+from parafold.core.types import PredictionResult, TCRChainPair, pMHCInput
 
 
 def predict_complex(
@@ -33,8 +36,8 @@ def predict_complex(
         peptide: bound peptide (typically 8-11 aa for class-I).
         hla: IPD-IMGT/HLA allele code, e.g. ``"HLA-A*02:01"``.
         out_dir: where Boltz-2 should write predictions. **Reserved for M3** —
-            currently this parameter is accepted but unused; the M3 release
-            wires the YAML emitter and honours this path.
+            until the YAML emitter lands, passing a value raises a
+            :class:`FutureWarning` so callers do not assume the path is honoured.
         runner: dependency injection for the Boltz-2 subprocess wrapper.
 
     Returns:
@@ -45,9 +48,23 @@ def predict_complex(
         ValueError: input validation rejected the request.
         NotImplementedError: until M3 ships the pMHC YAML emitter.
     """
-    pMHCInput(peptide=peptide, hla=hla)
-    if len(tcr_alpha.strip()) < 20 or len(tcr_beta.strip()) < 20:
-        raise ValueError("TCR chains must be >=20 residues")
+    try:
+        TCRChainPair(alpha=tcr_alpha, beta=tcr_beta)
+    except ValidationError as exc:
+        raise ValueError(f"invalid TCR chain pair: {exc}") from exc
+    try:
+        pMHCInput(peptide=peptide, hla=hla)
+    except ValidationError as exc:
+        raise ValueError(f"invalid pMHC input: {exc}") from exc
+
+    if out_dir is not None:
+        warnings.warn(
+            "predict_complex(out_dir=...) is reserved for M3 and currently "
+            "ignored. The M3 release wires the YAML emitter and will honour "
+            "this path.",
+            FutureWarning,
+            stacklevel=2,
+        )
 
     runner = runner or BoltzRunner()
     runner.assert_available()
