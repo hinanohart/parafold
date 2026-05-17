@@ -5,6 +5,22 @@ All notable changes to ParaFold are recorded here. The format follows
 follows [Semantic Versioning](https://semver.org/). Versions below 0.1.0 are
 pre-alpha; the public API may break without deprecation cycles until M3.
 
+## [0.0.5] — 2026-05-18
+
+### Fixed
+- ``scripts/release.sh`` now invokes ``$PYTHON_BIN`` (auto-detected
+  ``python`` → fallback to ``python3``) instead of bare ``python``. On
+  systems that ship only ``python3`` (Debian/Ubuntu default) v0.0.4's
+  release script aborted with "command not found" on the very first
+  ``current_version`` call. No GitHub Release was published for v0.0.4 as a
+  result; v0.0.5 is the first version where the entire release pipeline
+  actually executes end-to-end on a vanilla Linux host.
+
+### Notes
+- v0.0.4 is retained in git history and CHANGELOG as the audit-closure
+  commit (all the third-round fixes landed there). v0.0.5 is strictly the
+  release-tooling patch that makes those fixes shippable.
+
 ## [0.0.4] — 2026-05-18
 
 ### Changed
@@ -111,6 +127,7 @@ pre-alpha; the public API may break without deprecation cycles until M3.
   wrapper, pydantic input boundary, ``parafold`` CLI scaffold, Mol\* JSON
   exporter, 34 unit tests, ruff + mypy strict CI on Python 3.11 / 3.12.
 
+[0.0.5]: https://github.com/hinanohart/parafold/releases/tag/v0.0.5
 [0.0.4]: https://github.com/hinanohart/parafold/releases/tag/v0.0.4
 [0.0.3]: https://github.com/hinanohart/parafold/releases/tag/v0.0.3
 [0.0.2]: https://github.com/hinanohart/parafold/releases/tag/v0.0.2

@@ -33,6 +33,17 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
+# Resolve a usable Python interpreter once. On systems that ship only
+# `python3` (Debian/Ubuntu default) the bare `python` name does not exist.
+if command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="${PYTHON_BIN:-python}"
+elif command -v python3 >/dev/null 2>&1; then
+    PYTHON_BIN="${PYTHON_BIN:-python3}"
+else
+    printf 'release.sh: neither `python` nor `python3` is on PATH\n' >&2
+    exit 1
+fi
+
 # Internal: set to 1 by build() / ensure_dist() so callers downstream can
 # skip rebuilding when dist/ is already populated for the current version.
 _DIST_READY=0
@@ -52,7 +63,7 @@ require_clean_tree() {
 }
 
 current_version() {
-    python -c 'import tomllib, pathlib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])'
+    "$PYTHON_BIN" -c 'import tomllib, pathlib; print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])'
 }
 
 require_tag_at_head() {
@@ -73,8 +84,8 @@ dist_for_version() {
 cmd_build() {
     require_clean_tree
     rm -rf dist build ./*.egg-info
-    python -m pip install --upgrade --quiet build
-    python -m build
+    "$PYTHON_BIN" -m pip install --upgrade --quiet build
+    "$PYTHON_BIN" -m build
     ls -la dist/
     _DIST_READY=1
 }
@@ -95,9 +106,9 @@ cmd_pypi() {
     [ -n "${TWINE_PASSWORD:-}" ] \
         || die "TWINE_PASSWORD is required to upload to PyPI (scoped token)"
     ensure_dist
-    python -m pip install --upgrade --quiet twine
+    "$PYTHON_BIN" -m pip install --upgrade --quiet twine
     TWINE_USERNAME="${TWINE_USERNAME:-__token__}" \
-        python -m twine upload --non-interactive dist/*
+        "$PYTHON_BIN" -m twine upload --non-interactive dist/*
 }
 
 cmd_gh_release() {
@@ -111,7 +122,7 @@ cmd_gh_release() {
     # CHANGELOG.md (between this version's heading and the next).
     notes_file="$(mktemp)"
     trap 'rm -f "$notes_file"' EXIT
-    python - <<'PY' "$version" >"$notes_file"
+    "$PYTHON_BIN" - <<'PY' "$version" >"$notes_file"
 import pathlib
 import re
 import sys
@@ -146,7 +157,7 @@ cmd_hf_hub() {
     local weights_dir="${PARAFOLD_WEIGHTS_DIR:-./weights}"
     [ -d "$weights_dir" ] || die "weights directory $weights_dir does not exist"
 
-    python -m pip install --upgrade --quiet "huggingface_hub[cli]"
+    "$PYTHON_BIN" -m pip install --upgrade --quiet "huggingface_hub[cli]"
     # Export through HUGGING_FACE_HUB_TOKEN so the token does NOT appear in
     # argv (visible to `ps aux` on multi-tenant hosts). The CLI honours this
     # env var since huggingface_hub 0.20.
@@ -158,7 +169,7 @@ cmd_docs() {
     if [ ! -f mkdocs.yml ]; then
         die "mkdocs.yml not present — docs deploy is M6 scope"
     fi
-    python -m pip install --upgrade --quiet "mkdocs-material" "mkdocstrings[python]"
+    "$PYTHON_BIN" -m pip install --upgrade --quiet "mkdocs-material" "mkdocstrings[python]"
     mkdocs gh-deploy --force --clean --verbose
 }
 
