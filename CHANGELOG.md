@@ -5,6 +5,25 @@ All notable changes to ParaFold are recorded here. The format follows
 follows [Semantic Versioning](https://semver.org/). Versions below 0.1.0 are
 pre-alpha; the public API may break without deprecation cycles until M3.
 
+## [0.0.6] — 2026-05-18
+
+### Fixed
+- ``scripts/release.sh`` now prefers ``.venv/bin/python`` (the venv
+  ``CONTRIBUTING.md`` instructs contributors to create), then any
+  ``$VIRTUAL_ENV``, before falling back to a system interpreter. If the
+  resolved interpreter is the system Python, the script refuses to run
+  with an actionable hint to create the project venv first. On Debian
+  / Ubuntu hosts PEP 668 silently rejected ``pip install`` against
+  ``/usr/bin/python3`` in v0.0.5, aborting the release pipeline mid-build.
+
+### Notes
+- v0.0.4 and v0.0.5 carry valid scaffold code (the third-round audit
+  closure is in v0.0.4; the ``$PYTHON_BIN`` auto-detection is in v0.0.5).
+  Neither version produced a published GitHub Release because the release
+  tooling itself was the broken surface — v0.0.6 is the first version
+  where the entire pipeline runs end-to-end on a vanilla Linux host with
+  the project venv active.
+
 ## [0.0.5] — 2026-05-18
 
 ### Fixed
@@ -127,6 +146,7 @@ pre-alpha; the public API may break without deprecation cycles until M3.
   wrapper, pydantic input boundary, ``parafold`` CLI scaffold, Mol\* JSON
   exporter, 34 unit tests, ruff + mypy strict CI on Python 3.11 / 3.12.
 
+[0.0.6]: https://github.com/hinanohart/parafold/releases/tag/v0.0.6
 [0.0.5]: https://github.com/hinanohart/parafold/releases/tag/v0.0.5
 [0.0.4]: https://github.com/hinanohart/parafold/releases/tag/v0.0.4
 [0.0.3]: https://github.com/hinanohart/parafold/releases/tag/v0.0.3

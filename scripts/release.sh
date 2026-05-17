@@ -33,14 +33,44 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-# Resolve a usable Python interpreter once. On systems that ship only
-# `python3` (Debian/Ubuntu default) the bare `python` name does not exist.
-if command -v python >/dev/null 2>&1; then
-    PYTHON_BIN="${PYTHON_BIN:-python}"
+# Resolve a usable Python interpreter once.
+#
+# Priority order:
+#   1. PYTHON_BIN env override (operator explicitly chose one).
+#   2. The repository-local .venv/ (the install path CONTRIBUTING.md asks
+#      contributors to create).
+#   3. An already-activated VIRTUAL_ENV.
+#   4. system `python`.
+#   5. system `python3` (Debian/Ubuntu's default name).
+#
+# Modern Linux distributions enforce PEP 668 on system Python, so the
+# release tooling will not be able to `pip install build/twine/...` outside
+# a venv. We refuse to run unless we resolved a non-system interpreter,
+# rather than fail mid-build with an "externally-managed-environment"
+# error.
+if [ -n "${PYTHON_BIN:-}" ]; then
+    :  # honour explicit override
+elif [ -x "$REPO_ROOT/.venv/bin/python" ]; then
+    PYTHON_BIN="$REPO_ROOT/.venv/bin/python"
+elif [ -n "${VIRTUAL_ENV:-}" ] && [ -x "$VIRTUAL_ENV/bin/python" ]; then
+    PYTHON_BIN="$VIRTUAL_ENV/bin/python"
+elif command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="python"
 elif command -v python3 >/dev/null 2>&1; then
-    PYTHON_BIN="${PYTHON_BIN:-python3}"
+    PYTHON_BIN="python3"
 else
-    printf 'release.sh: neither `python` nor `python3` is on PATH\n' >&2
+    printf 'release.sh: no Python interpreter found\n' >&2
+    exit 1
+fi
+
+# If we ended up on a system python (no .venv detected), warn loudly.
+# PEP 668 will reject `pip install` against /usr/bin/python on modern
+# distros; tell the operator to create the venv per CONTRIBUTING.md.
+if ! "$PYTHON_BIN" -c 'import sys; sys.exit(0 if sys.prefix != sys.base_prefix else 1)' 2>/dev/null; then
+    printf 'release.sh: Python at %s is the system interpreter.\n' "$PYTHON_BIN" >&2
+    printf '            PEP 668 may reject pip install. Activate the project venv first:\n' >&2
+    printf '              python3 -m venv .venv && . .venv/bin/activate && pip install -e ".[dev]"\n' >&2
+    printf '            Then re-run scripts/release.sh, or pass PYTHON_BIN=/path/to/venv/python.\n' >&2
     exit 1
 fi
 
