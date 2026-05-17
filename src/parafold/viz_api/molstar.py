@@ -22,10 +22,12 @@ def structure_to_molstar_payload(pdb_path: Path, label: str) -> MolstarPayload:
         label: short human-readable label for the viewer's right-hand panel.
 
     Returns:
-        A :class:`MolstarPayload` ready for ``json.dumps``.
+        A :class:`MolstarPayload` ready for ``json.dumps``. ``url`` is emitted
+        in POSIX form (forward slashes) so the payload round-trips identically
+        across Linux, macOS, and Windows producers.
     """
     return MolstarPayload(
-        url=str(pdb_path),
+        url=pdb_path.as_posix(),
         format="pdb",
         label=label,
     )
