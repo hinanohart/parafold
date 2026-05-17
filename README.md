@@ -2,6 +2,7 @@
 
 > TCR-pMHC repertoire structural predictor — Boltz-2 base + HLA-allele-conditioned post-processing head + repertoire ensemble sampling.
 
+[![CI](https://github.com/hinanohart/parafold/actions/workflows/ci.yml/badge.svg)](https://github.com/hinanohart/parafold/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 
