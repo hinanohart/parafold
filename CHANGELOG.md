@@ -5,6 +5,22 @@ All notable changes to ParaFold are recorded here. The format follows
 follows [Semantic Versioning](https://semver.org/). Versions below 0.1.0 are
 pre-alpha; the public API may break without deprecation cycles until M3.
 
+## [0.0.7] — 2026-05-18
+
+### Fixed
+- ``scripts/release.sh cmd_gh_release`` removed the ``trap ... EXIT`` that
+  was firing after the function's ``local`` variables went out of scope.
+  Under ``set -u`` the trap then died on ``notes_file: unbound variable``
+  with exit code 1, even though the actual ``gh release create`` had
+  already succeeded. The notes file is now cleaned up inline at the end
+  of the function instead.
+
+### Notes
+- v0.0.6 is the first release where the entire pipeline succeeded enough
+  to publish wheel + sdist as GitHub Release assets; this v0.0.7 just
+  removes the trailing non-zero exit so re-running ``release.sh
+  gh-release`` (e.g. to refresh notes) no longer reports failure.
+
 ## [0.0.6] — 2026-05-18
 
 ### Fixed
@@ -146,6 +162,7 @@ pre-alpha; the public API may break without deprecation cycles until M3.
   wrapper, pydantic input boundary, ``parafold`` CLI scaffold, Mol\* JSON
   exporter, 34 unit tests, ruff + mypy strict CI on Python 3.11 / 3.12.
 
+[0.0.7]: https://github.com/hinanohart/parafold/releases/tag/v0.0.7
 [0.0.6]: https://github.com/hinanohart/parafold/releases/tag/v0.0.6
 [0.0.5]: https://github.com/hinanohart/parafold/releases/tag/v0.0.5
 [0.0.4]: https://github.com/hinanohart/parafold/releases/tag/v0.0.4

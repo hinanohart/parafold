@@ -145,13 +145,16 @@ cmd_gh_release() {
     command -v gh >/dev/null || die "gh CLI not installed"
     require_tag_at_head
     ensure_dist
-    local version notes_file
+    local version
     version="v$(current_version)"
     # Refresh title + notes on every invocation so the release page stays in
     # sync with CHANGELOG.md. We extract the matching version section from
     # CHANGELOG.md (between this version's heading and the next).
-    notes_file="$(mktemp)"
-    trap 'rm -f "$notes_file"' EXIT
+    # The notes file is cleaned up unconditionally at function exit; we do
+    # NOT use `trap ... EXIT` because trap survives the function scope and
+    # would fire after `local notes_file` has gone out of scope, tripping
+    # `set -u` on an unbound variable.
+    local notes_file="${TMPDIR:-/tmp}/parafold-release-notes.$$"
     "$PYTHON_BIN" - <<'PY' "$version" >"$notes_file"
 import pathlib
 import re
@@ -177,6 +180,7 @@ PY
             --notes-file "$notes_file" \
             dist/*
     fi
+    rm -f "$notes_file"
 }
 
 cmd_hf_hub() {
