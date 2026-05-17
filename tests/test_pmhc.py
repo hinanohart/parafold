@@ -27,6 +27,23 @@ class TestHLAEmbedding:
         assert HLAEmbedding(allele="HLA-A*02:01").locus() == "A"
         assert HLAEmbedding(allele="HLA-DRB1*15:01").locus() == "DRB1"
 
+    @pytest.mark.parametrize(
+        ("allele", "is_class_one"),
+        [
+            ("HLA-E*01:03", True),
+            ("HLA-F*01:01", True),
+            ("HLA-G*01:01", True),
+            ("HLA-DPA1*01:03", False),
+            ("HLA-DQB1*03:01", False),
+            ("HLA-DRB5*01:01", False),
+        ],
+    )
+    def test_class_assignment_edge_loci(self, allele: str, is_class_one: bool) -> None:
+        """Less-common loci (E/F/G + DPA1/DQB1/DRB5) classify correctly."""
+        emb = HLAEmbedding(allele=allele)
+        assert emb.is_class_one() == is_class_one
+        assert emb.is_class_two() != is_class_one
+
 
 class TestPeptideRegister:
     def test_class_one_anchors(self) -> None:

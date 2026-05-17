@@ -1,4 +1,6 @@
-"""Allow ``python -m parafold`` invocation."""
+"""``python -m parafold`` shim — delegates to :mod:`parafold.cli`."""
+
+from __future__ import annotations
 
 from parafold.cli import app
 

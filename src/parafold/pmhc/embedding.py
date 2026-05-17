@@ -24,6 +24,21 @@ class HLAEmbedding:
 
     Use :meth:`is_class_one` / :meth:`is_class_two` to gate downstream
     geometry choices (peptide register length, anchor count, etc.).
+
+    M3 reserved signatures
+    ----------------------
+    The following methods are part of the M3 contract: implementers must
+    provide them with this exact return type so callers wired through
+    :class:`parafold.pmhc.head.pMHCConditionalHead` keep compiling.
+
+    - ``vector() -> "numpy.ndarray"`` — a fixed-dimension allele embedding
+      vector. The M3 implementation reads from a packed ``.npz`` table
+      shipped via Hugging Face Hub.
+    - ``dim() -> int`` — the embedding dimensionality (constant for a given
+      release).
+
+    These are not yet present in the M0-M2 scaffold so that the typed shell
+    cannot be mistaken for the trained model. Adding them lands at M3.
     """
 
     allele: str

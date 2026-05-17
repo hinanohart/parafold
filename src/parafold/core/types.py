@@ -19,7 +19,10 @@ class TCRChainPair(BaseModel):
         cleaned = value.strip().upper()
         non_aa = set(cleaned) - set("ACDEFGHIKLMNPQRSTVWY")
         if non_aa:
-            raise ValueError(f"non-standard amino acid letters: {sorted(non_aa)}")
+            raise ValueError(
+                f"non-standard amino acid letters: {sorted(non_aa)}; use only the 20 "
+                "canonical single-letter codes (ACDEFGHIKLMNPQRSTVWY)",
+            )
         return cleaned
 
 
@@ -49,7 +52,14 @@ class pMHCInput(BaseModel):
 
 
 class PredictionResult(BaseModel):
-    """The outcome of a single ParaFold complex prediction."""
+    """The outcome of a single ParaFold complex prediction.
+
+    Note: ``notes`` is restricted to ``dict[str, str]`` for M0-M2 to keep the
+    JSON serialisation surface tight. M3 will widen this to
+    ``dict[str, str | int | float | bool]`` once the re-ranking head decides
+    what numeric metadata to surface; until then callers should encode
+    numeric values as strings if they need to round-trip them.
+    """
 
     pdb_path: Path
     confidence: float = Field(..., ge=0.0, le=1.0)

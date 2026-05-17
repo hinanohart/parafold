@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "parafold"
-version = "0.0.3"
+version = "0.0.4"
 description = "TCR-pMHC repertoire structural predictor built atop Boltz-2"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -95,6 +95,11 @@ filterwarnings = [
 branch = true
 source = ["parafold"]
 parallel = true
+# __main__.py is a thin `python -m parafold` shim — its semantics are covered
+# by the typer entry-point tests, and exercising the actual `python -m`
+# invocation in pytest would require subprocess overhead disproportionate to
+# the three-line file.
+omit = ["src/parafold/__main__.py"]
 
 [tool.coverage.report]
 exclude_lines = [

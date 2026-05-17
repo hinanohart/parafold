@@ -24,8 +24,16 @@ def version_cmd() -> None:
 
 @app.command("predict")
 def predict_cmd(
-    tcr_alpha: str = typer.Option(..., "--tcr-alpha", help="TCRα FASTA path"),
-    tcr_beta: str = typer.Option(..., "--tcr-beta", help="TCRβ FASTA path"),
+    tcr_alpha: str = typer.Option(
+        ...,
+        "--tcr-alpha",
+        help="TCRα single-letter polypeptide sequence (M3 will also accept @path.fa)",
+    ),
+    tcr_beta: str = typer.Option(
+        ...,
+        "--tcr-beta",
+        help="TCRβ single-letter polypeptide sequence (M3 will also accept @path.fa)",
+    ),
     peptide: str = typer.Option(..., "--peptide", help="Peptide single-letter sequence"),
     hla: str = typer.Option(..., "--hla", help="HLA allele code (e.g. 'HLA-A*02:01')"),
     out: str = typer.Option("out.pdb", "--out", help="Output PDB path"),

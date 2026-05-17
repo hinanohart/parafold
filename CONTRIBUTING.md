@@ -10,6 +10,11 @@ git clone https://github.com/hinanohart/parafold
 cd parafold
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,docs]"
+
+# (recommended) install the pre-commit hooks so ruff/mypy/whitespace fixers
+# run on every `git commit` and CI never has to be the first to fail:
+pip install pre-commit
+pre-commit install
 ```
 
 ## Release cadence

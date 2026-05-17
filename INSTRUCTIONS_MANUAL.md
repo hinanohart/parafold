@@ -18,7 +18,7 @@ is because the gating action is not a Claude-accessible API call.
 python3 --version
 
 # Recommended: uv (fast installer, optional)
-curl -Lsf https://astral.sh/uv/install.sh | sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # git identity
 git config --global user.name  "Your Name"
@@ -76,12 +76,17 @@ then `scripts/release.sh docs` exits with an error.
 
 ## M7 — preprint and journal
 
+The architecture memory records that the **arXiv preprint should ship at the
+same moment as the M3 PyPI cut** (not at the end of M7). In practice the
+sequence is: finish step 1–3 below as an M3 prerequisite, then resume the
+remaining items at the actual M7 phase.
+
 | # | Step | URL / Command | Effort | Scripted? |
 |---|------|--------------|--------|-----------|
 | 1 | Create an arXiv account (if first time) | https://arxiv.org/user/register | 10 min | ✗ |
 | 2 | Request endorsement (if first q-bio submission) | https://arxiv.org/auth/show-endorsers/q-bio.BM | up to days | ✗ |
-| 3 | Submit preprint | https://arxiv.org/submit — categories `cs.LG` + `q-bio.BM` | 45–90 min | ✗ (form-gated) |
-| 4 | Journal submission (Bioinformatics) | https://academic.oup.com/bioinformatics/pages/submission_online | 2–4 h | ✗ |
+| 3 | **(M3 timing)** Submit preprint *concurrently with the M3 PyPI release* | https://arxiv.org/submit — categories `cs.LG` + `q-bio.BM` | 45–90 min | ✗ (form-gated) |
+| 4 | **(M7 timing)** Journal submission (Bioinformatics) | https://academic.oup.com/bioinformatics/pages/submission_online | 2–4 h | ✗ |
 
 ORCID is required for the journal submission: https://orcid.org/register
 

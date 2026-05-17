@@ -20,6 +20,16 @@ class TestPredictComplex:
                 hla="HLA-A*02:01",
             )
 
+    def test_rejects_oversize_peptide(self) -> None:
+        """Peptides >25 residues are rejected at the pydantic boundary."""
+        with pytest.raises(ValueError, match=r"pMHC|peptide"):
+            predict_complex(
+                tcr_alpha="Q" * 30,
+                tcr_beta="D" * 30,
+                peptide="A" * 26,
+                hla="HLA-A*02:01",
+            )
+
     def test_rejects_malformed_hla(self) -> None:
         with pytest.raises(ValueError, match=r"pMHC|hla"):
             predict_complex(

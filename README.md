@@ -6,11 +6,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 
-ParaFold is an open-source Python package for predicting the structural ensemble of T-cell receptor / peptide / MHC complexes. It wraps [Boltz-2](https://github.com/jwohlwend/boltz) as the underlying structure predictor (subprocess; **not** a fork) and contributes:
+ParaFold is an open-source Python package for predicting the structural ensemble of T-cell receptor / peptide / MHC complexes. It wraps [Boltz-2](https://github.com/jwohlwend/boltz) as the underlying structure predictor (subprocess; **not** a fork). The M0-M2 release ships a typed scaffold; the contributions below are the package's stated scope, with each item annotated by the milestone that will deliver it.
 
-- An **HLA-allele embedding + peptide register** post-processing head conditioning the predicted complex on class-I/II allele context.
-- **Repertoire ensemble sampling** — top-K seed sampling with rescoring across TCR clonotypes, optimised for CDR3 contact-recovery on benchmarks drawn from IEDB / VDJdb / TCR3d.
-- A **Mol\* + UMAP** viz layer (M5) for visualising both individual complexes and the projected repertoire space.
+**Planned contributions** (subjunctive — none of these are wired through ``predict_complex`` yet; see Roadmap):
+
+- An **HLA-allele embedding + peptide register** post-processing head that *will* condition the predicted complex on class-I/II allele context. **(M3)**
+- **Repertoire ensemble sampling** — top-K seed sampling with rescoring across TCR clonotypes, to be evaluated for CDR3 contact-recovery on benchmarks drawn from IEDB / VDJdb / TCR3d. **(M4)**
+- A **Mol\* + UMAP** viz layer for visualising both individual complexes and the projected repertoire space. **(M5)**
+
+Today (M0-M2) the package ships: a typed Python API surface, a frozen-dataclass ``BoltzRunner`` subprocess wrapper, a pydantic input boundary, and a ``parafold`` CLI scaffold. Calling ``predict_complex`` raises ``NotImplementedError``; the CLI's ``predict`` command prints a roadmap notice and exits 2.
 
 > _"What they were calling prediction was closer to auditing — a quiet survey of the sub-space of permutations the protein had already been performing in private."_
 > &mdash; ParaFold design notes, internal.
@@ -61,10 +65,10 @@ print(result.pdb_path, result.confidence)
 
 ```
 parafold/
-├── core/        Boltz-2 subprocess wrapper, shared types
-├── pmhc/        HLA allele embedding, peptide register, conditional head
-├── ensemble/    Repertoire sampling, top-K rescoring
-└── viz_api/     Mol* JSON exporters, UMAP projections
+├── core/        Boltz-2 subprocess wrapper, shared types         (M0-M2 wired)
+├── pmhc/        HLA allele embedding, peptide register, head     (typed shell; M3 fills in)
+├── ensemble/    Repertoire sampling, top-K rescoring             (typed shell; M4 fills in)
+└── viz_api/     Mol* JSON exporters, (UMAP projections at M5)    (Mol* exporter only at M2)
 ```
 
 The base predictor is invoked out-of-process so that Boltz-2 version pinning, dependency surface, and GPU memory profile remain the user's choice. ParaFold layers a typed Python API on top of Boltz-2's command-line interface.

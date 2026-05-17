@@ -22,6 +22,20 @@ class pMHCConditionalHead:
 
     Pre-M3 this is a typed placeholder: :meth:`is_ready` returns ``False`` until
     trained weights ship via Hugging Face Hub at M4.
+
+    M3 reserved signatures
+    ----------------------
+    M3 implementers must add these methods; the names are claimed by the
+    public scaffold so callers can be written today against the future shape:
+
+    - ``rerank(per_residue_confidence: Sequence[float]) -> float``
+        returns the re-ranked confidence in the closed interval ``[0, 1]``.
+    - ``contact_mask(cdr_indices: Sequence[int]) -> tuple[bool, ...]``
+        returns a same-length suggested contact mask over the supplied CDR
+        residue indices.
+
+    Removing or renaming :meth:`is_ready` post-M3 would be a breaking change;
+    callers may gate optional features on ``head.is_ready()``.
     """
 
     embedding: HLAEmbedding

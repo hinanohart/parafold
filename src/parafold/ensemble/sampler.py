@@ -35,7 +35,20 @@ class SeedPlan:
 
 @dataclasses.dataclass(frozen=True, slots=True)
 class RepertoireEnsemble:
-    """Top-K seed sampling + rescoring across a TCR repertoire."""
+    """Top-K seed sampling + rescoring across a TCR repertoire.
+
+    M4 reserved signature
+    ---------------------
+    M4 implementers must add:
+
+    - ``sample(runner: BoltzRunner, inputs: Iterable[pMHCInput],
+        head: pMHCConditionalHead) -> list[PredictionResult]``
+
+    that draws ``plan.sample_count`` Boltz-2 outputs per input, rescores via
+    ``head``, and returns the top-``top_k`` by re-ranked confidence. The
+    constructor's invariants (``top_k > 0`` and ``top_k <= sample_count``)
+    are part of the M3-stable contract; ``sample`` itself ships at M4.
+    """
 
     plan: SeedPlan
     top_k: int = 5

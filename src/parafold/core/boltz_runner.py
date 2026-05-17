@@ -26,13 +26,19 @@ class BoltzRunner:
     extra_args: tuple[str, ...] = ()
     timeout_seconds: int = 3600
 
-    def assert_available(self) -> None:
-        """Raise :class:`BoltzRunnerError` if the executable is not on PATH."""
-        if shutil.which(self.executable) is None:
+    def _resolved_executable(self) -> str:
+        """Return the absolute path of ``self.executable`` on PATH, or die."""
+        resolved = shutil.which(self.executable)
+        if resolved is None:
             raise BoltzRunnerError(
                 f"upstream executable {self.executable!r} not found on PATH; "
                 "install it via `pip install boltz` or pass a different path",
             )
+        return resolved
+
+    def assert_available(self) -> None:
+        """Raise :class:`BoltzRunnerError` if the executable is not on PATH."""
+        self._resolved_executable()
 
     def run(self, yaml_input: Path, out_dir: Path) -> Path:
         """Run ``boltz predict`` and return the populated output directory.
@@ -48,8 +54,12 @@ class BoltzRunner:
             BoltzRunnerError: non-zero exit or timeout.
         """
         out_dir.mkdir(parents=True, exist_ok=True)
+        # Resolve to an absolute path so a `boltz` shim earlier in CWD or PATH
+        # cannot silently shadow the installed executable between
+        # `assert_available()` and the actual run.
+        executable = self._resolved_executable()
         argv: list[str] = [
-            self.executable,
+            executable,
             "predict",
             str(yaml_input),
             "--out_dir",
