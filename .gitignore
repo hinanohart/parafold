@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Virtualenvs
+.venv/
+venv/
+env/
+ENV/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+
+# Hydra / outputs
+outputs/
+.hydra/
+multirun/
+
+# Model artefacts (never commit weights, PDBs, datasets)
+*.pdb
+*.cif
+*.mmcif
+*.pt
+*.ckpt
+*.safetensors
+*.npz
+checkpoints/
+data/
+
+# Frontend (M5)
+node_modules/
+.svelte-kit/
+src/parafold/viz_api/static/
+
+# Failure recovery sandbox — never let cp -r snapshots leak data/
+experiments/_wip/**/data/
+experiments/_wip/**/checkpoints/
+
+# Secrets — never commit env files
+.env
+.env.*
+!.env.example

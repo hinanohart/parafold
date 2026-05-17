@@ -1,0 +1,81 @@
+"""Subprocess wrapper around the upstream ``boltz`` CLI.
+
+ParaFold deliberately does not fork Boltz-2 nor link it as a Python import.
+The runner shells out to ``boltz predict`` so that upstream version pinning,
+GPU-memory profile, and weight loading remain under the user's control.
+ParaFold owns input formatting and output parsing only.
+"""
+
+from __future__ import annotations
+
+import dataclasses
+import shutil
+import subprocess
+from pathlib import Path
+
+
+class BoltzRunnerError(RuntimeError):
+    """Raised when the upstream ``boltz`` CLI fails or is missing."""
+
+
+@dataclasses.dataclass(frozen=True, slots=True)
+class BoltzRunner:
+    """A thin, frozen wrapper that invokes ``boltz predict`` out-of-process."""
+
+    executable: str = "boltz"
+    extra_args: tuple[str, ...] = ()
+    timeout_seconds: int = 3600
+
+    def assert_available(self) -> None:
+        """Raise :class:`BoltzRunnerError` if the executable is not on PATH."""
+        if shutil.which(self.executable) is None:
+            raise BoltzRunnerError(
+                f"upstream executable {self.executable!r} not found on PATH; "
+                "install it via `pip install boltz` or pass a different path",
+            )
+
+    def run(self, yaml_input: Path, out_dir: Path) -> Path:
+        """Run ``boltz predict`` and return the populated output directory.
+
+        Args:
+            yaml_input: a Boltz-2 input YAML describing chains + ligands.
+            out_dir: directory the predictor should populate (created if absent).
+
+        Returns:
+            The same ``out_dir`` (for chaining).
+
+        Raises:
+            BoltzRunnerError: non-zero exit or timeout.
+        """
+        out_dir.mkdir(parents=True, exist_ok=True)
+        argv: list[str] = [
+            self.executable,
+            "predict",
+            str(yaml_input),
+            "--out_dir",
+            str(out_dir),
+            *self.extra_args,
+        ]
+        try:
+            completed = subprocess.run(
+                argv,
+                capture_output=True,
+                text=True,
+                timeout=self.timeout_seconds,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise BoltzRunnerError(
+                f"boltz predict timed out after {self.timeout_seconds}s",
+            ) from exc
+
+        if completed.returncode != 0:
+            tail = completed.stderr[-2000:] if completed.stderr else "(no stderr)"
+            raise BoltzRunnerError(
+                f"boltz predict failed (rc={completed.returncode}):\n--- stderr ---\n{tail}",
+            )
+        return out_dir
+
+    def with_extra_args(self, *args: str) -> BoltzRunner:
+        """Return a copy with additional argv tokens appended."""
+        return dataclasses.replace(self, extra_args=(*self.extra_args, *args))

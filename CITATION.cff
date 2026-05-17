@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use ParaFold in academic work, please cite this software entry until the preprint ships."
+title: "ParaFold: TCR-pMHC repertoire structural predictor"
+type: software
+authors:
+  - name: "ParaFold contributors"
+url: "https://github.com/runza/parafold"
+license: MIT
+version: 0.0.1
+date-released: "2026-05-17"
+keywords:
+  - bioinformatics
+  - structural-biology
+  - TCR
+  - pMHC
+  - immunology
