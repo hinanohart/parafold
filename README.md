@@ -15,14 +15,14 @@ The package today (M0-M2) ships the complete typed scaffold: input validation, a
 ```mermaid
 flowchart TD
     User([User / CLI]) --> Facade[predict_complex facade]
-    Facade --> Validator[Pydantic input validation\nTCRChainPair + pMHCInput]
-    Validator --> pMHC[pmhc module\nHLA embedding + peptide register\nM3]
-    Validator --> Ensemble[ensemble module\nTop-K seed sampler\nM4]
-    pMHC --> YAMLEmitter[pMHC YAML emitter\nM3]
-    YAMLEmitter --> BoltzRunner[BoltzRunner\nsubprocess wrapper]
-    BoltzRunner --> Boltz2[(Boltz-2 CLI\nexternal install)]
-    Boltz2 --> OutputParser[Output parser\nPDB + confidence\nM3]
-    OutputParser --> VizAPI[viz_api module\nMol-star JSON exporter\nM2 partial]
+    Facade --> Validator[Pydantic input validation<br>TCRChainPair + pMHCInput]
+    Validator --> pMHC[pmhc module<br>HLA embedding + peptide register<br>M3]
+    Validator --> Ensemble[ensemble module<br>Top-K seed sampler<br>M4]
+    pMHC --> YAMLEmitter[pMHC YAML emitter<br>M3]
+    YAMLEmitter --> BoltzRunner[BoltzRunner<br>subprocess wrapper]
+    BoltzRunner --> Boltz2[(Boltz-2 CLI<br>external install)]
+    Boltz2 --> OutputParser[Output parser<br>PDB + confidence<br>M3]
+    OutputParser --> VizAPI[viz_api module<br>Mol-star JSON exporter<br>M2 partial]
     OutputParser --> Result([PredictionResult])
 ```
 
