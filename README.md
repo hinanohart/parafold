@@ -10,24 +10,6 @@
 
 The package today (M0-M2) ships the complete typed scaffold: input validation, a frozen-dataclass `BoltzRunner` subprocess wrapper, a pydantic input boundary, and the `parafold` CLI. Full prediction output (pMHC YAML emission, HLA-allele conditioning, and ensemble sampling) lands in M3-M5 on the roadmap below.
 
-## Architecture
-
-```mermaid
-flowchart TD
-    User([User / CLI]) --> Facade[predict_complex facade]
-    Facade --> Validator[Pydantic input validation<br>TCRChainPair + pMHCInput]
-    Validator --> pMHC[pmhc module<br>HLA embedding + peptide register<br>M3]
-    Validator --> Ensemble[ensemble module<br>Top-K seed sampler<br>M4]
-    pMHC --> YAMLEmitter[pMHC YAML emitter<br>M3]
-    YAMLEmitter --> BoltzRunner[BoltzRunner<br>subprocess wrapper]
-    BoltzRunner --> Boltz2[(Boltz-2 CLI<br>external install)]
-    Boltz2 --> OutputParser[Output parser<br>PDB + confidence<br>M3]
-    OutputParser --> VizAPI[viz_api module<br>Mol-star JSON exporter<br>M2 partial]
-    OutputParser --> Result([PredictionResult])
-```
-
-> **Pre-M3 status.** M0-M2 ship the typed scaffold only. Until M3 lands the pMHC YAML emitter, the CLI prints a roadmap notice and exits non-zero, and the Python API raises `NotImplementedError`. The snippets below show the M3 interface shape, not current behaviour.
-
 ## Why ParaFold?
 
 Boltz-2 is a general structure predictor. ParaFold adds:
@@ -80,6 +62,24 @@ result = predict_complex(
 )
 print(result.pdb_path, result.confidence)
 ```
+
+## Architecture
+
+```mermaid
+flowchart TD
+    User([User / CLI]) --> Facade[predict_complex facade]
+    Facade --> Validator[Pydantic input validation<br>TCRChainPair + pMHCInput]
+    Validator --> pMHC[pmhc module<br>HLA embedding + peptide register<br>M3]
+    Validator --> Ensemble[ensemble module<br>Top-K seed sampler<br>M4]
+    pMHC --> YAMLEmitter[pMHC YAML emitter<br>M3]
+    YAMLEmitter --> BoltzRunner[BoltzRunner<br>subprocess wrapper]
+    BoltzRunner --> Boltz2[(Boltz-2 CLI<br>external install)]
+    Boltz2 --> OutputParser[Output parser<br>PDB + confidence<br>M3]
+    OutputParser --> VizAPI[viz_api module<br>Mol-star JSON exporter<br>M2 partial]
+    OutputParser --> Result([PredictionResult])
+```
+
+> **Pre-M3 status.** M0-M2 ship the typed scaffold only. Until M3 lands the pMHC YAML emitter, the CLI prints a roadmap notice and exits non-zero, and the Python API raises `NotImplementedError`. The snippets above show the M3 interface shape, not current behaviour.
 
 ## Module layout
 
