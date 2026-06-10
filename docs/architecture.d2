@@ -1,0 +1,43 @@
+direction: down
+explanation: |md
+  ### parafold
+  **TCR-pMHC repertoire structural predictor — Boltz-2 base + HLA-allele-conditioned post-processing head + repertoire ensemble sampling.**
+| {near: top-center}
+
+user: "① User / CLI\nparafold predict" {shape: oval; style: {fill: "#6366f1"; font-color: "#fff"; stroke: "#4338ca"; bold: true; font-size: 18}}
+facade: "② predict_complex\nfacade" {style: {fill: "#0ea5e9"; font-color: "#fff"; stroke: "#0369a1"; bold: true; font-size: 18}}
+validator: "③ Pydantic input validation\nTCRChainPair + pMHCInput" {style: {fill: "#0ea5e9"; font-color: "#fff"; stroke: "#0369a1"; bold: true; font-size: 16}}
+
+user -> facade: "② call"
+facade -> validator: "③ validate"
+
+modules: "Core Modules" {
+  style: {fill: "#f0fdf4"; stroke: "#10b981"; font-color: "#065f46"; bold: true; font-size: 16}
+  pmhc: "pmhc module\nHLA embedding\npeptide register (M3)"
+  ensemble: "ensemble module\nTop-K seed sampler (M4)"
+  *.style.fill: "#dcfce7"; *.style.font-color: "#065f46"
+}
+
+yaml_emitter: "pMHC YAML emitter\n(M3)" {style: {fill: "#dcfce7"; font-color: "#065f46"; stroke: "#10b981"; bold: true; font-size: 14}}
+boltz_runner: "④ BoltzRunner\nsubprocess wrapper" {style: {fill: "#0ea5e9"; font-color: "#fff"; stroke: "#0369a1"; bold: true; font-size: 16}}
+boltz2: "Boltz-2 CLI\nexternal install" {style: {fill: "#fef3c7"; font-color: "#92400e"; stroke: "#f59e0b"; bold: true; font-size: 14}}
+output_parser: "⑤ Output parser\nPDB + confidence (M3)" {style: {fill: "#0ea5e9"; font-color: "#fff"; stroke: "#0369a1"; bold: true; font-size: 16}}
+
+viz_api: "viz_api module\nMol-star JSON exporter (M2)" {style: {fill: "#dcfce7"; font-color: "#065f46"; stroke: "#10b981"; bold: true; font-size: 14}}
+result: "⑥ PredictionResult" {shape: cylinder; style: {fill: "#fdf2f8"; stroke: "#ec4899"; font-color: "#9d174e"; bold: true}}
+
+validator -> modules.pmhc: "③ pMHC"
+validator -> modules.ensemble: "③ ensemble"
+modules.pmhc -> yaml_emitter: "emit YAML"
+yaml_emitter -> boltz_runner: "④ run"
+boltz_runner -> boltz2: "④ subprocess"
+boltz2 -> output_parser: "⑤ parse"
+output_parser -> viz_api: "visualize"
+output_parser -> result: "⑥ return"
+
+legend: "Legend" {
+  near: bottom-center
+  style: {fill: "#f8fafc"; stroke: "#cbd5e1"; font-size: 13}
+  e: "● entry/CLI"; c: "● core"; p: "● module"; b: "● external"; d: "● output"
+  e.style.font-color: "#4338ca"; c.style.font-color: "#0369a1"; p.style.font-color: "#10b981"; b.style.font-color: "#f59e0b"; d.style.font-color: "#ec4899"
+}

@@ -65,19 +65,9 @@ print(result.pdb_path, result.confidence)
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    User([User / CLI]) --> Facade[predict_complex facade]
-    Facade --> Validator[Pydantic input validation<br>TCRChainPair + pMHCInput]
-    Validator --> pMHC[pmhc module<br>HLA embedding + peptide register<br>M3]
-    Validator --> Ensemble[ensemble module<br>Top-K seed sampler<br>M4]
-    pMHC --> YAMLEmitter[pMHC YAML emitter<br>M3]
-    YAMLEmitter --> BoltzRunner[BoltzRunner<br>subprocess wrapper]
-    BoltzRunner --> Boltz2[(Boltz-2 CLI<br>external install)]
-    Boltz2 --> OutputParser[Output parser<br>PDB + confidence<br>M3]
-    OutputParser --> VizAPI[viz_api module<br>Mol-star JSON exporter<br>M2 partial]
-    OutputParser --> Result([PredictionResult])
-```
+<div align="center">
+  <img src="docs/architecture.png" alt="parafold architecture" width="840">
+</div>
 
 > **Pre-M3 status.** M0-M2 ship the typed scaffold only. Until M3 lands the pMHC YAML emitter, the CLI prints a roadmap notice and exits non-zero, and the Python API raises `NotImplementedError`. The snippets above show the M3 interface shape, not current behaviour.
 
@@ -143,3 +133,4 @@ Preprint forthcoming. See `CITATION.cff` once M3 ships.
 ## Contributing
 
 Issues and PRs welcome. Run `pytest`, `mypy`, and `ruff` before opening a PR.
+
