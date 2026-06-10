@@ -21,7 +21,7 @@ flowchart TD
     pMHC --> YAMLEmitter[pMHC YAML emitter\nM3]
     YAMLEmitter --> BoltzRunner[BoltzRunner\nsubprocess wrapper]
     BoltzRunner --> Boltz2[(Boltz-2 CLI\nexternal install)]
-    Boltz2 --> OutputParser[Output parser\nPDB + confidence]
+    Boltz2 --> OutputParser[Output parser\nPDB + confidence\nM3]
     OutputParser --> VizAPI[viz_api module\nMol-star JSON exporter\nM2 partial]
     OutputParser --> Result([PredictionResult])
 ```
