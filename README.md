@@ -60,8 +60,8 @@ pip install boltz   # external; requires Linux/CUDA for full prediction
 
 ```bash
 parafold predict \
-  --tcr-alpha tcr_a.fa \
-  --tcr-beta tcr_b.fa \
+  --tcr-alpha @tcr_a.fa \
+  --tcr-beta @tcr_b.fa \
   --peptide GILGFVFTL \
   --hla "HLA-A*02:01" \
   --out out.pdb
